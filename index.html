@@ -1,0 +1,170 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Procedure Time Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .step {
+            margin-bottom: 15px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-radius: 4px;
+        }
+        button {
+            padding: 10px 15px;
+            margin-right: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+        .time-btn { background-color: #4CAF50; color: white; }
+        .calc-btn { background-color: #2196F3; color: white; }
+        .reset-btn { background-color: #f44336; color: white; }
+        .time-display {
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        .duration {
+            font-style: italic;
+            color: #666;
+            margin-top: 5px;
+        }
+      button {
+    width: 100px; /* Increase width for a bigger button */
+    height: 100px; /* Increase height for a bigger button */
+    border-radius: 50%; /* Keep them circular */
+    margin: 10px; /* Space between buttons */
+    border: 2px solid #ccc;
+    background-color: #f0f0f0;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    transition: background-color 0.3s ease; /* Smooth color transition */
+}
+
+button:hover {
+    background-color: #e0e0e0; /* Changes on hover */
+    box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3);
+}
+
+button.clicked {
+    background-color: gray; /* Grays out once clicked */
+}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Procedure Time Calculator</h1>
+        
+        <div class="step">
+            <button id="patientArrivalBtn" class="time-btn">Patient Arrival</button>
+            <span id="patientArrivalTime" class="time-display"></span>
+        </div>
+        
+        <div class="step">
+            <button id="skinToSkinStartBtn" class="time-btn">Skin-to-Skin Start</button>
+            <span id="skinToSkinStartTime" class="time-display"></span>
+        </div>
+        
+        <div class="step">
+            <button id="ablationStartBtn" class="time-btn">Ablation Start</button>
+            <span id="ablationStartTime" class="time-display"></span>
+        </div>
+        
+        <div class="step">
+            <button id="ablationEndBtn" class="time-btn">Ablation End</button>
+            <span id="ablationEndTime" class="time-display"></span>
+        </div>
+        
+        <div class="step">
+            <button id="skinToSkinEndBtn" class="time-btn">Skin-to-Skin End</button>
+            <span id="skinToSkinEndTime" class="time-display"></span>
+        </div>
+        
+        <div class="step">
+            <button id="calculateBtn" class="calc-btn">Calculate Durations</button>
+        </div>
+        
+        <div id="durationsDisplay">
+            <div id="skinToSkinDuration" class="duration"></div>
+            <div id="ablationDuration" class="duration"></div>
+            <div id="totalProcedureTime" class="duration"></div>
+        </div>
+        
+        <button id="resetBtn" class="reset-btn" style="margin-top: 20px;">Reset All</button>
+    </div>
+
+    <script>
+        let times = {
+            patientArrival: null,
+            skinToSkinStart: null,
+            skinToSkinEnd: null,
+            ablationStart: null,
+            ablationEnd: null
+        };
+
+        function updateTimeDisplay(id, time) {
+            document.getElementById(id).textContent = time ? new Date(time).toLocaleTimeString() : '';
+        }
+
+        function calculateDuration(start, end) {
+            return start && end ? ((end - start) / 60000).toFixed(2) : null;
+        }
+
+        function handleTimeButtonClick(event) {
+            const btnId = event.target.id;
+            const timeKey = btnId.replace('Btn', '');
+            times[timeKey] = Date.now();
+            updateTimeDisplay(timeKey + 'Time', times[timeKey]);
+        }
+
+        document.querySelectorAll('.time-btn').forEach(btn => {
+            btn.addEventListener('click', handleTimeButtonClick);
+        });
+
+        document.getElementById('calculateBtn').addEventListener('click', function() {
+            const skinToSkinDuration = calculateDuration(times.skinToSkinStart, times.skinToSkinEnd);
+            const ablationDuration = calculateDuration(times.ablationStart, times.ablationEnd);
+            const totalDuration = calculateDuration(times.skinToSkinStart, times.skinToSkinEnd);
+
+            document.getElementById('skinToSkinDuration').textContent = skinToSkinDuration ? `Skin-to-Skin Duration: ${skinToSkinDuration} minutes` : 'Skin-to-Skin Duration: Not available';
+            document.getElementById('ablationDuration').textContent = ablationDuration ? `Ablation Duration: ${ablationDuration} minutes` : 'Ablation Duration: Not available';
+            document.getElementById('totalProcedureTime').textContent = totalDuration ? `Total Procedure Time: ${totalDuration} minutes` : 'Total Procedure Time: Not available';
+        });
+
+        document.getElementById('resetBtn').addEventListener('click', function() {
+            times = {
+                patientArrival: null,
+                skinToSkinStart: null,
+                skinToSkinEnd: null,
+                ablationStart: null,
+                ablationEnd: null
+            };
+            document.querySelectorAll('.time-display, .duration').forEach(el => el.textContent = '');
+        });
+    </script>
+</body>
+</html>
+
