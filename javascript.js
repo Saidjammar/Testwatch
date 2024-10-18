@@ -83,3 +83,71 @@ html
 <div id="timer-display">0m 0s</div>
 <button id="start-button">Start Timer</button>
 <button id="stop-button">Stop Timer</button>
+javascript
+let timer; // The timer variable
+let isRunning = false;
+let elapsedTime = 0; // Time in seconds
+
+const startButton = document.getElementById("startButton");
+const stopButton = document.getElementById("stopButton");
+const resetButton = document.getElementById("resetButton");
+const display = document.getElementById("display");
+
+// Load saved state from Local Storage
+const savedTime = localStorage.getItem("elapsedTime");
+const savedRunningState = localStorage.getItem("isRunning");
+
+if (savedTime) {
+    elapsedTime = parseInt(savedTime, 10);
+}
+
+if (savedRunningState === 'true') {
+    isRunning = true;
+    startTimer();
+}
+
+// Start Button Click Event
+startButton.addEventListener("click", () => {
+    if (!isRunning) {
+        isRunning = true;
+        startTimer();
+    }
+});
+
+// Stop Button Click Event
+stopButton.addEventListener("click", () => {
+    isRunning = false;
+    clearInterval(timer);
+    saveState();
+});
+
+// Reset Button Click Event
+resetButton.addEventListener("click", () => {
+    isRunning = false;
+    clearInterval(timer);
+    elapsedTime = 0;
+    updateDisplay();
+    saveState();
+});
+
+// Timer Function
+function startTimer() {
+    timer = setInterval(() => {
+        elapsedTime++;
+        updateDisplay();
+        saveState();
+    }, 1000);
+}
+
+// Update Display
+function updateDisplay() {
+    const seconds = elapsedTime % 60;
+    const minutes = Math.floor(elapsedTime / 60);
+    display.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+}
+
+// Save State
+function saveState() {
+    localStorage.setItem("elapsedTime", elapsedTime);
+    localStorage.setItem("isRunning", isRunning);
+}
